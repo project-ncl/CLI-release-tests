@@ -24,7 +24,14 @@ def test_scenarion_25():
     proj_name = "Testcase 25 project " + suffix
     proj_id = pnccli.run_json("create-project", proj_name)['id']
 
-    environment_id = pnccli.run_json("list-environments")[0]['id']
+    environments = pnccli.run_json("list-environments")
+    environment_id = None
+    for environment in environments:
+        if "Demo Environment" not in environment['name']:
+            environment_id = environment['id']
+            break
+    if environment_id is None:
+        pytest.fail("Couldn't find proper build environment")
 
     repository_url = "https://github.com/michalszynkiewicz/empty.git"
     found_repository = pnccli.run_json("search-repository-configuration", repository_url)

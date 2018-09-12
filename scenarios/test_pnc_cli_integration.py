@@ -25,11 +25,7 @@ def test_scenarion_25():
     proj_id = pnccli.run_json("create-project", proj_name)['id']
 
     environments = pnccli.run_json("list-environments")
-    environment_id = None
-    for environment in environments:
-        if "Demo Environment" not in environment['name']:
-            environment_id = environment['id']
-            break
+    environment_id = pnccli.get_environment()
     if environment_id is None:
         pytest.fail("Couldn't find proper build environment")
 

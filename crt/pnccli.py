@@ -40,3 +40,10 @@ def run_json(command, *args):
         print("Failed parsing json output of command '" + " ".join(commands) + "' with output:\n" + out,
               file=sys.stderr)
         raise
+
+
+def get_environment():
+    environments = run_json("list-environments")
+    for environment in environments:
+        if "Demo Environment" not in environment['name']:
+            return environment['id']

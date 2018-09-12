@@ -1,6 +1,5 @@
 
 import pytest
-import time
 from crt import pnccli
 from crt import common
 
@@ -66,18 +65,7 @@ def test_scenarion_25():
     if build_id is None:
         pytest.fail("Couldn't find running build of Build Configuration " + str(bc_id))
 
-    out = pnccli.try_run("get-running-build", build_id)
-    retry = 40
-    while retry > 0 and '"status": "BUILDING"' in out:
-        time.sleep(30)
-        out = pnccli.try_run("get-running-build", build_id)
-        retry -= 1
-
-    if '"status": "BUILDING"' in out:
-        pytest.fail("Build " + str(build_id) + " is taking too long to finish.")
-
-    build_status = pnccli.run_json("get-build-record", build_id)['status']
-    assert "DONE" == build_status
+    pnccli.wait_for_build(build_id, 40)
 
     artifacts = pnccli.run_json("list-built-artifacts", build_id)
     print("TODO, asser correct number of atifacts", len(artifacts), artifacts)

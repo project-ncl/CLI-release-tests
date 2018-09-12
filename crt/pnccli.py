@@ -1,10 +1,11 @@
 from __future__ import print_function
 from subprocess import Popen
 from subprocess import PIPE
-import pytest
 import json
-import sys
 import os
+import pytest
+import sys
+import time
 
 def process_args(command, *args):
     commands = ["pnc", command]
@@ -47,3 +48,17 @@ def get_environment():
     for environment in environments:
         if "Demo Environment" not in environment['name']:
             return environment['id']
+
+def wait_for_build(build_id, retry):
+    out = try_run("get-running-build", build_id)
+    while retry > 0 and ('"status": "BUILDING"' in out or '"status": "WAITING_FOR_DEPENDENCIES"' in out):
+        time.sleep(30)
+        out = try_run("get-running-build", build_id)
+        retry -= 1
+
+    if '"status": "BUILDING"' in out:
+        pytest.fail("Build " + str(build_id) + " is taking too long to finish.")
+
+    build_status = run_json("get-build-record", build_id)['status']
+    assert "DONE" == build_status
+    return retry

@@ -1,5 +1,4 @@
 import pytest
-import time
 import os
 from crt import pnccli
 from crt import common
@@ -24,5 +23,30 @@ def test_scenarion_10():
 
     suffix = "-tc10-" + common.rand_string(8)
     # make-mead -c sso-real.cfg -p "Red Hat Single Sign-On" -v 7.1 -e 3 -s _npm_ANYTHING -b
-    out = pnccli.run("make-mead", "-c", utils_path+"/make-mead/test-cfg/sso.cfg", "-p", "Red Hat Single Sign-On", "-v", "7.1", "-e", environment_id, "-s" + suffix, "-b")
+    config_path = utils_path+"/make-mead/test-cfg/sso.cfg"
+    out = pnccli.run("make-mead", "-c", config_path, "-p", prod_name, "-v", "7.1", "-e", environment_id, "-s" + suffix, "-b")
 
+    set_name = prod_name + "-7.1-all" + suffix
+    bc_ids = pnccli.run_json("get-build-configuration-set", "-n", set_name)['build_configuration_ids']
+
+    assert len(bc_ids) == 4
+
+    build_ids = []
+    running_builds = pnccli.run_json("list-running-builds")
+    for running_build in running_builds:
+        if running_build['build_configuration_id'] in bc_ids:
+            build_ids.append(running_build['id'])
+
+    assert len(build_ids) == 4
+
+    bc_name = "org.keycloak-keycloak-parent-2.4.0.Final" + suffix
+    bc = pnccli.run_json("get-build-configuration", "-n", bc_name)
+
+    assert bc['id'] in bc_ids
+
+    bc_ids.remove(bc['id'])
+    assert set(bc_ids) == set(bc['dependency_ids'])
+
+    retry = 40
+    for build_id in build_ids:
+        retry = pnccli.wait_for_build(build_id, retry)

@@ -8,7 +8,7 @@ def parse_pnc_cli_conf(file):
         config = json.load(f)
         with open("pnc-cli.conf", "w") as of:
             of.write("[PNC]\n")
-            of.write("pncurl = " + config['pncUiAddress'].replace("/pnc-web","") + "\n")
+            of.write("pncurl = " + config['pncRestAddress'].replace("/pnc-rest/rest","") + "\n")
             of.write("keycloakUrl = " + config['keycloakAddress'] + "\n")
             of.write("keycloakrealm = pncredhat\n")
             of.write("keycloakclientid = pncdirect\n")

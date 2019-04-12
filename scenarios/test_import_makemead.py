@@ -23,7 +23,7 @@ def test_scenarion_10():
 
     suffix = "-tc10-" + common.rand_string(8)
     # make-mead -c sso-real.cfg -p "Red Hat Single Sign-On" -v 7.1 -e 3 -s _npm_ANYTHING -b
-    config_path = utils_path+"/make-mead/test-cfg/sso.cfg"
+    config_path = utils_path+"/tests/make-mead/test-cfg/sso.cfg"
     out = pnccli.run("make-mead", "-c", config_path, "-p", prod_name, "-v", "7.1", "-e", environment_id, "-s" + suffix, "-b")
 
     set_name = prod_name + "-7.1-all" + suffix

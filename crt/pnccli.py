@@ -52,7 +52,7 @@ def get_environment():
 def wait_for_build(build_id, retry):
     out = try_run("get-running-build", build_id)
     while retry > 0 and ('"status": "BUILDING"' in out or '"status": "WAITING_FOR_DEPENDENCIES"' in out):
-        time.sleep(30)
+        time.sleep(60)
         out = try_run("get-running-build", build_id)
         retry -= 1
 

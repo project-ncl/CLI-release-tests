@@ -47,6 +47,6 @@ def test_scenarion_10():
     bc_ids.remove(bc['id'])
     assert set(bc_ids) == set(bc['dependency_ids'])
 
-    retry = 40
+    retry = 90
     for build_id in build_ids:
         retry = pnccli.wait_for_build(build_id, retry)

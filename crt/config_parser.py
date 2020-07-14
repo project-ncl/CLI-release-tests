@@ -6,14 +6,17 @@ import json
 def parse_pnc_cli_conf(file):
     with open(file, 'r') as f:
         config = json.load(f)
-        with open("pnc-cli.conf", "w") as of:
-            of.write("[PNC]\n")
-            of.write("pncurl = " + config['pncRestAddress'].replace("/pnc-rest/rest","") + "\n")
-            of.write("keycloakUrl = " + config['keycloakAddress'] + "\n")
-            of.write("keycloakrealm = pncredhat\n")
-            of.write("keycloakclientid = pncdirect\n")
-            of.write("username = " + config['pncUser'] + "\n")
-            of.write("password = " + config['pncPassword'] + "\n")
+        with open("config.yaml", "w") as of:
+            of.write("profile:\n")
+            of.write('- name: "default"\n')
+            of.write('  pnc:\n')
+            of.write('      url: "' + config['pncRestAddress'].replace("/rest-new","") + '"\n')
+            of.write('      bifrostBaseurl: ""\n')
+            of.write('  keycloak:\n')
+            of.write('      url: "' + config['keycloakAddress'] + '"\n')
+            of.write('      realm: "pncredhat"\n')
+            of.write('      username: "' + config['pncUser'] + '"\n')
+            of.write('      clientSecret: "' + config['pncPassword'] + '"\n')
 
 def main():
     # print command line arguments

@@ -11,7 +11,7 @@ def parse_pnc_cli_conf(file):
             of.write('- name: "default"\n')
             of.write('  pnc:\n')
             of.write('      url: "' + config['pncRestAddress'].replace("/rest-new","") + '"\n')
-            of.write('      bifrostBaseurl: ""\n')
+            of.write('      bifrostBaseurl: "' + config['bifrostAddress'] + '"\n')
             of.write('  keycloak:\n')
             of.write('      url: "' + config['keycloakAddress'] + '"\n')
             of.write('      realm: "pncredhat"\n')

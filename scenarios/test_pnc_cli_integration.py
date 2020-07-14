@@ -8,10 +8,10 @@ def test_scenarion_25():
 
     prod_name = "Testcase 25 product " + suffix
     prod_short = "TCP-" + suffix
-    prod_id = pnccli.run_json("create-product", prod_name, prod_short)['id']
+    prod_id = pnccli.run_json("product", "create", "-o", prod_name, "--abbreviation", prod_short)['id']
 
     prod_version = "1.0"
-    prod_version_id = pnccli.run_json("create-product-version", prod_id, prod_version)['id']
+    prod_version_id = pnccli.run_json("product-version", "create", "-o", prod_version, "--product-id", prod_id)['id']
 
     prod_milestone = "0.ER1"
     prod_milestone_start = "2017-01-01"

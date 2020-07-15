@@ -14,9 +14,10 @@ def test_scenarion_25():
     prod_version_id = pnccli.run_json("product-version", "create", "-o", prod_version, "--product-id", prod_id)['id']
 
     prod_milestone = "0.ER1"
+    prod_milestone_version = prod_version + "." + prod_milestone
     prod_milestone_start = "2017-01-01"
     prod_milestone_end = "2027-12-31"
-    prod_milestone_id = pnccli.run_json("product-milestone", "create", "-o", prod_milestone,
+    prod_milestone_id = pnccli.run_json("product-milestone", "create", "-o", prod_milestone_version,
                                         "--product-version-id", prod_version_id, "--starting-date", prod_milestone_start,
                                         "--end-date", prod_milestone_end)['id']
 

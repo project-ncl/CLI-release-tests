@@ -51,7 +51,7 @@ def test_scenarion_25():
     assert bc['productVersion']['id'] == prod_version_id
 
     group_name = "Testcase 25 BC set " + suffix
-    group_id = pnccli.run_json("group-config", "create", group_name, "--product-version-id", prod_version_id)['id']
+    group_id = pnccli.run_json("group-config", "create", "-o", group_name, "--product-version-id", prod_version_id)['id']
 
     pnccli.run("group-config", "add-build-configuration-to-set", group_id, "--bc-id", bc_id)
 

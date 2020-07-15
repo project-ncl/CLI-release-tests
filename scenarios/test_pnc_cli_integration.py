@@ -56,7 +56,7 @@ def test_scenarion_25():
     pnccli.run("group-config", "add-build-config", group_id, "--bc-id", bc_id)
 
     group_build_id = pnccli.run_json("group-build", "start", "-o", group_id, "--wait")['id']
-    builds = pnccli.run_json("group-build", "list-builds", "-o", group_build_id)['id']
+    builds = pnccli.run_json("group-build", "list-builds", "-o", group_build_id)
 
     build_id = None
     for build in builds:

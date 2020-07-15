@@ -43,7 +43,7 @@ def run_json(command, *args):
         raise
 
 def get_environment():
-    environments = pnccli.run_json("environment", "list", "-o")
+    environments = run_json("environment", "list", "-o")
     for environment in environments:
         if "Demo Environment" not in environment['name']:
             return environment['id']

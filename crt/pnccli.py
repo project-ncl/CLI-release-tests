@@ -42,23 +42,9 @@ def run_json(command, *args):
               file=sys.stderr)
         raise
 
-
 def get_environment():
-    environments = run_json("list-environments")
+    environments = pnccli.run_json("environment", "list", "-o")
     for environment in environments:
         if "Demo Environment" not in environment['name']:
             return environment['id']
 
-def wait_for_build(build_id, retry):
-    out = try_run("get-running-build", build_id)
-    while retry > 0 and ('"status": "BUILDING"' in out or '"status": "WAITING_FOR_DEPENDENCIES"' in out):
-        time.sleep(60)
-        out = try_run("get-running-build", build_id)
-        retry -= 1
-
-    if '"status": "BUILDING"' in out:
-        pytest.fail("Build " + str(build_id) + " is taking too long to finish.")
-
-    build_status = run_json("get-build-record", build_id)['status']
-    assert "DONE" == build_status
-    return retry

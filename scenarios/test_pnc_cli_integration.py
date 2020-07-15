@@ -16,60 +16,58 @@ def test_scenarion_25():
     prod_milestone = "0.ER1"
     prod_milestone_start = "2017-01-01"
     prod_milestone_end = "2027-12-31"
-    prod_milestone_url = "http://example.com"
-    prod_milestone_id = pnccli.run_json("create-milestone", prod_version_id, prod_milestone, prod_milestone_start,
-                                        prod_milestone_end, prod_milestone_url)['id']
+    prod_milestone_id = pnccli.run_json("product-milestone", "create", "-o", prod_milestone,
+                                        "--product-version-id", prod_version_id, "--starting-date", prod_milestone_start,
+                                        "--end-date", prod_milestone_end)['id']
 
     proj_name = "Testcase 25 project " + suffix
-    proj_id = pnccli.run_json("create-project", proj_name)['id']
+    proj_id = pnccli.run_json("project", "create", "-o", proj_name)['id']
 
-    environments = pnccli.run_json("list-environments")
     environment_id = pnccli.get_environment()
     if environment_id is None:
         pytest.fail("Couldn't find proper build environment")
 
     repository_url = "https://github.com/michalszynkiewicz/empty.git"
-    found_repository = pnccli.run_json("search-repository-configuration", repository_url)
+    found_repository = pnccli.run_json("scm-repository", "list", "-o", "--search-url", repository_url)
     if found_repository:
         repository_id = found_repository[0]['id']
     else:
-        repository_id = pnccli.run_json("create-repository-configuration", repository_url)['id']
+        repository_id = pnccli.run_json("scm-repository", "create-and-sync", "-o", repository_url)['id']
 
     bc_name = "testcase-25-bc-01-" + suffix
     bc_revision = "master"
     bc_script = "mvn clean deploy"
-    bc_id = pnccli.run_json("create-build-configuration", bc_name, proj_id, environment_id,
-                                      repository_id, bc_revision, bc_script)['id']
+    bc_id = pnccli.run_json("build-config", "create", "-o", bc_name, "--project-id", proj_id,
+                            "--environment-id", environment_id, "--scm-repository-id", repository_id,
+                            "--scm-revision", bc_revision, "--build-script", bc_script)['id']
 
     bc_desc = "This is testcase 25 BC " + suffix
-    pnccli.run("update-build-configuration", bc_id, "-d", bc_desc, "-pvi", prod_version_id)
+    pnccli.run("build-config", "update", "-o", bc_id, "--description", bc_desc, "--product-version-id", prod_version_id)
 
-    bc = pnccli.run_json("get-build-configuration", "-i", bc_id)
+    bc = pnccli.run_json("build-config", "get", "-o", bc_id,)
     assert bc['id'] == bc_id
     assert bc['description'] == bc_desc
-    assert bc['product_version_id'] == prod_version_id
+    assert bc['productVersion']['id'] == prod_version_id
 
     group_name = "Testcase 25 BC set " + suffix
-    group_id = pnccli.run_json("create-build-configuration-set", group_name, "-pvi", prod_version_id)['id']
+    group_id = pnccli.run_json("group-config", "create", group_name, "--product-version-id", prod_version_id)['id']
 
-    pnccli.run("add-build-configuration-to-set", "-sid", group_id, "-cid", bc_id)
+    pnccli.run("group-config", "add-build-configuration-to-set", "-o", group_id, "--bc-id", bc_id)
 
-    pnccli.run("build-set", "-i", group_id)
+    group_build_id = pnccli.run("group-build", "start", "-o", group_id, "--wait")['id']
+    builds = pnccli.run("group-build", "list-builds", "-o", group_build_id)['id']
 
-    running_builds = pnccli.run_json("list-running-builds")
     build_id = None
-    for running_build in running_builds:
-        if running_build['build_configuration_id'] == bc_id:
-            build_id = running_build['id']
+    for build in builds:
+        if build['buildConfigRevision']['id'] == bc_id:
+            build_id = build['id']
             break
     if build_id is None:
-        pytest.fail("Couldn't find running build of Build Configuration " + str(bc_id))
+        pytest.fail("Couldn't find build of Build Configuration " + str(bc_id))
 
-    pnccli.wait_for_build(build_id, 40)
-
-    artifacts = pnccli.run_json("list-built-artifacts", build_id)
-    print("TODO, asser correct number of atifacts", len(artifacts), artifacts)
+    artifacts = pnccli.run_json("build", "list-built-artifacts", "-o", build_id)
+    print("TODO, assert correct number of atifacts", len(artifacts), artifacts)
 
 
-    out = pnccli.run("close-milestone", prod_milestone_id, "--wait")
+    out = pnccli.run("product-milestone", "close", "-o", prod_milestone_id)
     print("TODO, what with close-milestone output?", out)

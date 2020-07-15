@@ -43,7 +43,7 @@ def test_scenarion_25():
                             "--scm-revision", bc_revision, "--build-script", bc_script)['id']
 
     bc_desc = "This is testcase 25 BC " + suffix
-    pnccli.run("build-config", "update", "-o", bc_id, "--description", bc_desc, "--product-version-id", prod_version_id)
+    pnccli.run("build-config", "update", bc_id, "--description", bc_desc, "--product-version-id", prod_version_id)
 
     bc = pnccli.run_json("build-config", "get", "-o", bc_id,)
     assert bc['id'] == bc_id
@@ -53,10 +53,10 @@ def test_scenarion_25():
     group_name = "Testcase 25 BC set " + suffix
     group_id = pnccli.run_json("group-config", "create", group_name, "--product-version-id", prod_version_id)['id']
 
-    pnccli.run("group-config", "add-build-configuration-to-set", "-o", group_id, "--bc-id", bc_id)
+    pnccli.run("group-config", "add-build-configuration-to-set", group_id, "--bc-id", bc_id)
 
-    group_build_id = pnccli.run("group-build", "start", "-o", group_id, "--wait")['id']
-    builds = pnccli.run("group-build", "list-builds", "-o", group_build_id)['id']
+    group_build_id = pnccli.run_json("group-build", "start", "-o", group_id, "--wait")['id']
+    builds = pnccli.run_json("group-build", "list-builds", "-o", group_build_id)['id']
 
     build_id = None
     for build in builds:
@@ -70,5 +70,5 @@ def test_scenarion_25():
     print("TODO, assert correct number of atifacts", len(artifacts), artifacts)
 
 
-    out = pnccli.run("product-milestone", "close", "-o", prod_milestone_id)
+    out = pnccli.run("product-milestone", "close", prod_milestone_id)
     print("TODO, what with close-milestone output?", out)

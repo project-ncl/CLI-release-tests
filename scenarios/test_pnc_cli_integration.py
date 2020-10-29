@@ -21,7 +21,7 @@ def test_scenarion_25():
     prod_milestone_end = "2027-12-31"
     prod_milestone_id = pnccli.run_json("product-milestone", "create", "-o", prod_milestone_version,
                                         "--product-version-id", prod_version_id, "--starting-date", prod_milestone_start,
-                                        "--end-date", prod_milestone_end)['id']
+                                        "--end-date", prod_milestone_end, "--set-current")['id']
 
     proj_name = "Testcase 25 project " + suffix
     proj_id = pnccli.run_json("project", "create", "-o", proj_name)['id']

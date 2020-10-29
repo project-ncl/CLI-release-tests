@@ -1,10 +1,12 @@
 
 import pytest
+import logging
 from crt import pnccli
 from crt import common
 
 def test_scenarion_25():
     suffix = common.rand_string(8)
+    logging.warning('Suffix is: ' + suffix)
 
     prod_name = "Testcase 25 product " + suffix
     prod_short = "TCP-" + suffix

@@ -45,6 +45,6 @@ def run_json(command, *args):
 def get_environment():
     environments = run_json("environment", "list", "-o")
     for environment in environments:
-        if "Demo Environment" not in environment['name']:
+        if "Demo Environment" not in environment['name'] and "Mvn" in environment['name'] and not environment['deprecated']:
             return environment['id']
 

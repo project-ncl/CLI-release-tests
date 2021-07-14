@@ -23,8 +23,7 @@ def run(command, *args):
     commands = process_args(command, *args)
     #print("Running command: " + " ".join(commands))
     p = Popen(commands, stdout=PIPE)
-    p.wait()
-    out = p.stdout.read()
+    out = p.communicate()[0]
     #print("Output:\n" + out)
     if p.returncode != 0:
         pytest.fail("Failed running command ("+str(p.returncode)+")'" + " ".join(commands) + "' with output:\n" + out)

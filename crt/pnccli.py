@@ -24,6 +24,7 @@ def run(command, *args):
     #print("Running command: " + " ".join(commands))
     p = Popen(commands, stdout=PIPE)
     out = p.communicate()[0]
+    out = str(out)
     #print("Output:\n" + out)
     if p.returncode != 0:
         pytest.fail("Failed running command ("+str(p.returncode)+")'" + " ".join(commands) + "' with output:\n" + out)
